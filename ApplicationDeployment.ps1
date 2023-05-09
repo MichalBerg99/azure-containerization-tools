@@ -175,6 +175,10 @@ if (-not ($selectedResourceGroup -and $gitRepo -and $acrName -and $aksName)) {
 $tempFolder = New-Item -ItemType Directory -Path (Join-Path $env:TEMP (Get-Random))
 git clone $gitRepo $tempFolder 2>&1
 
+$branchName = "master" # Replace with the desired branch name
+git -C $tempFolder fetch origin $branchName
+git -C $tempFolder checkout -t "origin/$branchName"
+
 # Login to Azure
 Connect-AzAccount
 
