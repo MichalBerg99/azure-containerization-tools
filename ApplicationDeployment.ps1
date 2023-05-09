@@ -288,8 +288,6 @@ spec:
       labels:
         app: app
     spec:
-      imagePullSecrets:
-      - name: my-secret
       containers:
       - name: app-container
         image: $imageName
