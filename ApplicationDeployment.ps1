@@ -35,27 +35,31 @@ Add-Type -AssemblyName PresentationCore
         <ComboBox Grid.Row="0" Grid.Column="1" Name="ResourceGroupComboBox" Margin="5" />
         <Label Grid.Row="1" Grid.Column="0" Content="Git Repository:" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="GitRepoTextBox" Margin="5" />
-        <Label Grid.Row="2" Grid.Column="0" Content="Azure Container Registry (ACR) Name:" />
-        <ComboBox Grid.Row="2" Grid.Column="1" Name="ACRNameComboBox" Margin="5" />
-        <Label Grid.Row="3" Grid.Column="0" Content="Azure Kubernetes Service (AKS) Name:" />
-        <ComboBox Grid.Row="3" Grid.Column="1" Name="AKSNameComboBox" Margin="5" />
-        <Label Grid.Row="4" Grid.Column="0" Content="Namespace (Optional):" />
-        <TextBox Grid.Row="4" Grid.Column="1" Name="NamespaceTextBox" Margin="5" />
-        <Label Grid.Row="5" Grid.Column="0" Content="Networking Capabilities:" />
-        <ListBox Grid.Row="5" Grid.Column="1" Name="NetworkingCapabilitiesListBox" Margin="5" SelectionMode="Multiple">
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Branch Name:" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="BranchNameTextBox" Margin="5" />
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Azure Container Registry (ACR) Name:" />
+        <ComboBox Grid.Row="3" Grid.Column="1" Name="ACRNameComboBox" Margin="5" />
+        <Label Grid.Row="4" Grid.Column="0" Content="Azure Kubernetes Service (AKS) Name:" />
+        <ComboBox Grid.Row="4" Grid.Column="1" Name="AKSNameComboBox" Margin="5" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Namespace (Optional):" />
+        <TextBox Grid.Row="5" Grid.Column="1" Name="NamespaceTextBox" Margin="5" />
+        <Label Grid.Row="6" Grid.Column="0" Content="Networking Capabilities:" />
+        <ListBox Grid.Row="6" Grid.Column="1" Name="NetworkingCapabilitiesListBox" Margin="5" SelectionMode="Multiple">
             <ListBoxItem>Storage Account</ListBoxItem>
             <ListBoxItem>Redis</ListBoxItem>
             <ListBoxItem>Database</ListBoxItem>
         </ListBox>
-        <StackPanel Grid.Row="6" Grid.Column="1" Name="StorageAccountPanel" Margin="5" Visibility="Collapsed">
+        <StackPanel Grid.Row="7" Grid.Column="1" Name="StorageAccountPanel" Margin="5" Visibility="Collapsed">
             <Label Content="Storage Account:" />
             <ComboBox Name="StorageAccountComboBox" />
         </StackPanel>
-        <StackPanel Grid.Row="7" Grid.Column="1" Name="DatabasePanel" Margin="5" Visibility="Collapsed">
+        <StackPanel Grid.Row="8" Grid.Column="1" Name="DatabasePanel" Margin="5" Visibility="Collapsed">
             <Label Content="Database:" />
             <ComboBox Name="DatabaseComboBox" />
         </StackPanel>
-        <Button Grid.Row="8" Grid.Column="1" Name="DeployButton" Content="Deploy" Margin="5" />
+        <Button Grid.Row="9" Grid.Column="1" Name="DeployButton" Content="Deploy" Margin="5" />
     </Grid>
 </Window>
 "@
@@ -70,6 +74,7 @@ $gitRepoTextBox = $window.FindName('GitRepoTextBox')
 $acrNameComboBox = $window.FindName('ACRNameComboBox')
 $aksNameComboBox = $window.FindName('AKSNameComboBox')
 $namespaceTextBox = $window.FindName('NamespaceTextBox')
+$branchNameTextBox = $window.FindName('BranchNameTextBox')
 $networkingCapabilitiesListBox = $window.FindName('NetworkingCapabilitiesListBox')
 $storageAccountPanel = $window.FindName('StorageAccountPanel')
 $storageAccountComboBox = $window.FindName('StorageAccountComboBox')
@@ -78,7 +83,10 @@ $databaseComboBox = $window.FindName('DatabaseComboBox')
 $deployButton = $window.FindName('DeployButton')
 
 # Get existing resource groups, ACRs, and AKS clusters
-Connect-AzAccount
+
+$tenantId = "ace1cb30-a5d7-4184-95b2-800ff3963db0"
+Connect-AzAccount -TenantId $tenantId
+# Connect-AzAccount
 $allResourceGroups = Get-AzResourceGroup | Select-Object -ExpandProperty ResourceGroupName
 $resourceGroupComboBox.ItemsSource = $allResourceGroups
 
@@ -143,6 +151,7 @@ $namespace = $namespaceTextBox.Text
 if (-not $namespace) {
     $namespace = "default"
 }
+$branchName = $branchNameTextBox.Text
 
 Write-Host "Namespace: $namespace"
 
@@ -180,7 +189,7 @@ git -C $tempFolder fetch origin $branchName
 git -C $tempFolder checkout -t "origin/$branchName"
 
 # Login to Azure
-Connect-AzAccount
+#Connect-AzAccount
 
 # Build and push the container image to ACR
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
