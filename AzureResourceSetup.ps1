@@ -139,48 +139,46 @@ if (-not $useExistingResourceGroup) {
     New-AzResourceGroup -Name $resource_group -Location $location
 }
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Check if the Container Registry exists, if not, create one
 if (-not $useExistingContainerRegistry) {
     New-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name -Sku Basic -EnableAdminUser
 }
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Login to the Container Registry
 $credentials = Get-AzContainerRegistryCredential -ResourceGroupName $resource_group -Name $container_registry_name
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Get the login server address of the container registry
 $acr_login_server = (Get-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name).LoginServer
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Create an AKS cluster with one node pool and one node
 New-AzAksCluster -ResourceGroupName $resource_group -Name $aks_cluster_name -NodeCount $node_count -EnableManagedIdentity
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Grant the required permissions for 'acrpull' role assignment
 $aksIdentityPrincipalId = (Get-AzAksCluster -ResourceGroupName $resource_group -Name $aks_cluster_name).Identity.PrincipalId
 $acrResourceId = (Get-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name).Id
 New-AzRoleAssignment -ObjectId $aksIdentityPrincipalId -RoleDefinitionName "AcrPull" -Scope $acrResourceId
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 Set-AzAksCluster -Name $aks_cluster_name -ResourceGroupName $resource_group -AcrNameToAttach $container_registry_name
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
 # Connect kubectl to the AKS cluster
 Import-AzAksCredential -ResourceGroupName $resource_group -Name $aks_cluster_name
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 
-# Connect kubectl to the AKS cluster
-Import-AzAksCredential -ResourceGroupName $resource_group -Name $aks_cluster_name
 
 # Display an alert to inform the user that the script has finished running
 [System.Windows.Forms.MessageBox]::Show('The script has finished running.', 'Script Complete', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
