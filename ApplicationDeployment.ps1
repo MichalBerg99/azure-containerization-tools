@@ -191,7 +191,7 @@ if ($branchName) {
 }
 
 # Login to Azure
-#Connect-AzAccount
+Connect-AzAccount
 
 # Build and push the container image to ACR
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
