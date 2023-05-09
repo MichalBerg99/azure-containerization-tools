@@ -36,7 +36,7 @@ Add-Type -AssemblyName PresentationCore
         <Label Grid.Row="1" Grid.Column="0" Content="Git Repository:" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="GitRepoTextBox" Margin="5" />
 
-        <Label Grid.Row="2" Grid.Column="0" Content="Branch Name:" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Branch Name (Optional):" />
         <TextBox Grid.Row="2" Grid.Column="1" Name="BranchNameTextBox" Margin="5" />
 
         <Label Grid.Row="3" Grid.Column="0" Content="Azure Container Registry (ACR) Name:" />
@@ -184,9 +184,11 @@ if (-not ($selectedResourceGroup -and $gitRepo -and $acrName -and $aksName)) {
 $tempFolder = New-Item -ItemType Directory -Path (Join-Path $env:TEMP (Get-Random))
 git clone $gitRepo $tempFolder 2>&1
 
-$branchName = "master" # Replace with the desired branch name
-git -C $tempFolder fetch origin $branchName
-git -C $tempFolder checkout -t "origin/$branchName"
+# Switch to the specified remote branch if provided
+if ($branchName) {
+    git -C $tempFolder fetch origin $branchName
+    git -C $tempFolder checkout -t "origin/$branchName"
+}
 
 # Login to Azure
 #Connect-AzAccount
