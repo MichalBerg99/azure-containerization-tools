@@ -188,7 +188,7 @@ Write-host "Docker image has been pushed to the container registry"
 
 # Apply networking capabilities
 $envVars = @()
-if ($networkingCapabilities -contains 'Storage Account') {
+if ($networkingCapabilities -like "*Storage Account") {
     $selectedStorageAccount = $storageAccountComboBox.SelectedItem
     if ($selectedStorageAccount) {
         $storageAccountConnectionString = (Get-AzStorageAccount -Name $selectedStorageAccount -ResourceGroupName $selectedResourceGroup).Context.ConnectionString
