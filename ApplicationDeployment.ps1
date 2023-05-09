@@ -51,11 +51,11 @@ Add-Type -AssemblyName PresentationCore
             <ListBoxItem>Redis</ListBoxItem>
             <ListBoxItem>Database</ListBoxItem>
         </ListBox>
-        <StackPanel Grid.Row="7" Grid.Column="1" Name="StorageAccountPanel" Margin="5" Visibility="Collapsed">
+        <StackPanel Grid.Row="7" Grid.Column="1" Name="StorageAccountPanel" Margin="5" >
             <Label Content="Storage Account:" />
             <ComboBox Name="StorageAccountComboBox" />
         </StackPanel>
-        <StackPanel Grid.Row="8" Grid.Column="1" Name="DatabasePanel" Margin="5" Visibility="Collapsed">
+        <StackPanel Grid.Row="8" Grid.Column="1" Name="DatabasePanel" Margin="5">
             <Label Content="Database:" />
             <ComboBox Name="DatabaseComboBox" />
         </StackPanel>
@@ -90,53 +90,34 @@ Connect-AzAccount -TenantId $tenantId
 $allResourceGroups = Get-AzResourceGroup | Select-Object -ExpandProperty ResourceGroupName
 $resourceGroupComboBox.ItemsSource = $allResourceGroups
 
-# Resource group selection changed event handler
+
 $resourceGroupComboBox.Add_SelectionChanged({
-$selectedResourceGroup = $resourceGroupComboBox.SelectedItem
+    $selectedResourceGroup = $resourceGroupComboBox.SelectedItem
 
-if ($selectedResourceGroup) {
-    # Get ACRs and AKS clusters in the selected resource group
-    $allAcrs = Get-AzContainerRegistry -ResourceGroupName $selectedResourceGroup
-    $allAks = Get-AzAksCluster -ResourceGroupName $selectedResourceGroup
+    if ($selectedResourceGroup) {
+        # Get ACRs and AKS clusters in the selected resource group
+        $allAcrs = Get-AzContainerRegistry -ResourceGroupName $selectedResourceGroup
+        $allAks = Get-AzAksCluster -ResourceGroupName $selectedResourceGroup
+         # Get storage accounts and databases in the selected resource group
+        $allStorageAccounts = Get-AzStorageAccount -ResourceGroupName $selectedResourceGroup
 
-    # Populate the ACR and AKS ComboBoxes
-    $acrNameComboBox.Items.Clear()
-    $aksNameComboBox.Items.Clear()
-    foreach ($acr in $allAcrs) {
-        $acrNameComboBox.Items.Add($acr.Name) | Out-Null
-    }
-    foreach ($aks in $allAks) {
-        $aksNameComboBox.Items.Add($aks.Name) | Out-Null
-    }
+        # Populate the ACR, AKS, Storage account ComboBoxes
+        $acrNameComboBox.Items.Clear()
+        $aksNameComboBox.Items.Clear()
+        # Populate the  and database ComboBoxes
+        $storageAccountComboBox.Items.Clear()
 
-    # Get storage accounts and databases in the selected resource group
-    $allStorageAccounts = Get-AzStorageAccount -ResourceGroupName $selectedResourceGroup
-    $allDatabases = Get-AzSqlServer -ResourceGroupName $selectedResourceGroup
+        foreach ($acr in $allAcrs) {
+            $acrNameComboBox.Items.Add($acr.Name) | Out-Null
+        }
+        foreach ($aks in $allAks) {
+            $aksNameComboBox.Items.Add($aks.Name) | Out-Null
+        }
 
-    # Populate the storage account and database ComboBoxes
-    $storageAccountComboBox.Items.Clear()
-    $databaseComboBox.Items.Clear()
-    foreach ($storageAccount in $allStorageAccounts) {
-        $storageAccountComboBox.Items.Add($storageAccount.Name) | Out-Null
-    }
-    foreach ($database in $allDatabases) {
-        $databaseComboBox.Items.Add($database.Name) | Out-Null
-    }
-
-    # Show or hide the storage account and database panels
-    if ($storageAccountComboBox.Items.Count -gt 0) {
-        $storageAccountPanel.Visibility = 'Visible'
-    } else {
-        $storageAccountPanel.Visibility = 'Collapsed'
-    }
-
-    if ($databaseComboBox.Items.Count -gt 0) {
-        $databasePanel.Visibility = 'Visible'
-    } else {
-        $databasePanel.Visibility = 'Collapsed'
-    }
-}
-
+        foreach ($storageAccount in $allStorageAccounts) {
+            $storageAccountComboBox.Items.Add($storageAccount.StorageAccountName) | Out-Null
+        }
+    } 
 })
 
 
