@@ -307,7 +307,7 @@ Write-Host "Saving deployment YAML file to disk"
 kubectl apply -f "$tempFolder\deployment.yaml" --namespace=$namespace
 Write-Host "Applying deployment YAML to Azure Kubernetes Cluster"
 # Clean up
-# Remove-Item -Recurse -Force $tempFolder
+Remove-Item -Recurse -Force $tempFolder
 
 # Show success message
 [System.Windows.MessageBox]::Show("Deployment completed!")
