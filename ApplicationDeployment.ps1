@@ -195,7 +195,7 @@ if ($networkingCapabilities -like "*Storage Account") {
 
 $redisContainerYaml = ""
 $redisPassword = [Convert]::ToBase64String((New-Guid).ToByteArray()).TrimEnd('=')
-$secretName = "redis-password-$aksName" # or any other unique identifier
+$secretName = "redis-password-$($aksName.ToLower())"
 kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
 
 # Stores the Redis container YAML definition if Redis is selected
