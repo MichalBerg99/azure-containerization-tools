@@ -247,6 +247,9 @@ spec:
                 secretKeyRef:
                   name: $secretName
                   key: password
+
+          args: [ "--requirepass", "$(REDIS_PASSWORD)" ]
+
 "@
 }
 
