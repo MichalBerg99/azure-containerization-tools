@@ -166,17 +166,10 @@ if (-not $useExistingResourceGroup) {
 Start-Sleep -Seconds 2
 
 # Check if the Container Registry exists, if not, create one
-#if (-not $useExistingContainerRegistry) {
-#    New-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name -Sku Basic -EnableAdminUser
-#}
-
-# Check if the Container Registry exists, if not, create one
 if (-not $useExistingContainerRegistry) {
     New-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name -Sku Basic -EnableAdminUser
 }
-
 Wait-Resource -ResourceType "Microsoft.ContainerRegistry/registries" -ResourceGroupName $resource_group -ResourceName $container_registry_name
-
 
 Start-Sleep -Seconds 2
 
@@ -190,10 +183,8 @@ $acr_login_server = (Get-AzContainerRegistry -ResourceGroupName $resource_group 
 
 Start-Sleep -Seconds 2
 
-# Create an AKS cluster with one node pool and one node
-#New-AzAksCluster -ResourceGroupName $resource_group -Name $aks_cluster_name -NodeCount $node_count -EnableManagedIdentity
-# Create an AKS cluster with one node pool and one node
-New-AzAksCluster -ResourceGroupName $resource_group -Name $aks_cluster_name -NodeCount $node_count -EnableManagedIdentity
+# Create an AKS cluster with a custom node count
+az aks create -n $aks_cluster_name -g $resource_group --generate-ssh-keys --attach-acr $container_registry_name
 
 Start-Sleep -Seconds 2
 
@@ -201,15 +192,7 @@ Start-Sleep -Seconds 2
 Wait-Resource -ResourceType "Microsoft.ContainerRegistry/registries" -ResourceGroupName $resource_group -ResourceName $container_registry_name
 Wait-Resource -ResourceType "Microsoft.ContainerService/managedClusters" -ResourceGroupName $resource_group -ResourceName $aks_cluster_name
 
-# Grant the required permissions for 'acrpull' role assignment
-$aksIdentityPrincipalId = (Get-AzAksCluster -ResourceGroupName $resource_group -Name $aks_cluster_name).Identity.PrincipalId
-write-host $aksIdentityPrincipalId
-$acrResourceId = (Get-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name).Id
-write-host $acrResourceId
-New-AzRoleAssignment -ObjectId $aksIdentityPrincipalId -RoleDefinitionName "AcrPull" -Scope $acrResourceId
-Set-AzAksCluster -Name $aks_cluster_name -ResourceGroupName $resource_group -AcrNameToAttach $container_registry_name
-
-Start-Sleep -Seconds 2
+Start-sleep -Seconds 2
 
 # Connect kubectl to the AKS cluster
 Import-AzAksCredential -ResourceGroupName $resource_group -Name $aks_cluster_name
