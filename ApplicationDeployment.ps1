@@ -55,11 +55,7 @@ Add-Type -AssemblyName PresentationCore
             <Label Content="Storage Account:" />
             <ComboBox Name="StorageAccountComboBox" />
         </StackPanel>
-        <StackPanel Grid.Row="8" Grid.Column="1" Name="DatabasePanel" Margin="5">
-            <Label Content="Database:" />
-            <ComboBox Name="DatabaseComboBox" />
-        </StackPanel>
-        <Button Grid.Row="9" Grid.Column="1" Name="DeployButton" Content="Deploy" Margin="5" />
+        <Button Grid.Row="8" Grid.Column="1" Name="DeployButton" Content="Deploy" Margin="5" />
     </Grid>
 </Window>
 "@
@@ -78,8 +74,6 @@ $branchNameTextBox = $window.FindName('BranchNameTextBox')
 $networkingCapabilitiesListBox = $window.FindName('NetworkingCapabilitiesListBox')
 $storageAccountPanel = $window.FindName('StorageAccountPanel')
 $storageAccountComboBox = $window.FindName('StorageAccountComboBox')
-$databasePanel = $window.FindName('DatabasePanel')
-$databaseComboBox = $window.FindName('DatabaseComboBox')
 $deployButton = $window.FindName('DeployButton')
 
 # Get existing resource groups, ACRs, and AKS clusters
@@ -200,9 +194,9 @@ if ($networkingCapabilities -like "*Storage Account") {
 }
 
 $redisContainerYaml = ""
-#$redisPassword = [Convert]::ToBase64String((New-Guid).ToByteArray()).TrimEnd('=')
-#$secretName = "redis-password-$aksName" # or any other unique identifier
-#kubectl create secret generic $secretName --from-literal=password=$redisPassword
+$redisPassword = [Convert]::ToBase64String((New-Guid).ToByteArray()).TrimEnd('=')
+$secretName = "redis-password-$aksName" # or any other unique identifier
+kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
 
 # Stores the Redis container YAML definition if Redis is selected
 if ($networkingCapabilities -like "*Redis") {
@@ -247,6 +241,12 @@ spec:
           image: redis:6.2
           ports:
             - containerPort: 6379
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: $secretName
+                  key: password
 "@
 }
 
@@ -306,6 +306,8 @@ kubectl apply -f "$tempFolder\deployment.yaml" --namespace=$namespace
 Write-Host "Applying deployment YAML to Azure Kubernetes Cluster"
 # Clean up
 Remove-Item -Recurse -Force $tempFolder
+
+write-host $redisPassword
 
 # Show success message
 [System.Windows.MessageBox]::Show("Deployment completed!")
