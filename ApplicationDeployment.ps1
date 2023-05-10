@@ -111,7 +111,7 @@ $resourceGroupComboBox.Add_SelectionChanged({
         foreach ($storageAccount in $allStorageAccounts) {
             $storageAccountComboBox.Items.Add($storageAccount.StorageAccountName) | Out-Null
         }
-    } 
+    }
 })
 
 
@@ -186,10 +186,10 @@ if ($networkingCapabilities -like "*Storage Account") {
     $selectedStorageAccount = $storageAccountComboBox.SelectedItem
     if ($selectedStorageAccount) {
         $storageAccountConnectionString = (Get-AzStorageAccount -Name $selectedStorageAccount -ResourceGroupName $selectedResourceGroup).Context.ConnectionString
-        $envVars += @{
-            name  = "STORAGE_ACCOUNT_CONNECTION_STRING"
-            value = $storageAccountConnectionString
-        }
+        $envYaml += @"
+        - name: STORAGE_ACCOUNT_CONNECTION_STRING
+          value: "$storageAccountConnectionString"
+"@
     }
 }
 
@@ -200,10 +200,15 @@ kubectl create secret generic $secretName --from-literal=password=$redisPassword
 
 # Stores the Redis container YAML definition if Redis is selected
 if ($networkingCapabilities -like "*Redis") {
-    $envVars += @{
-        name  = "REDIS_HOST"
-        value = "redis"
-    }
+    $envYaml += @"
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $secretName
+              key: password
+"@
 
     $redisContainerYaml = @"
 
@@ -247,33 +252,13 @@ spec:
                 secretKeyRef:
                   name: $secretName
                   key: password
-
-          args: [ "--requirepass", "$(REDIS_PASSWORD)" ]
+          args: [ "--requirepass", "$redisPassword" ]
 
 "@
 }
 
 
 Write-Host "Preparing environment variables for YAML deployment"
-
-if ($networkingCapabilities -contains 'External Database') {
-    $selectedDatabase = $databaseComboBox.SelectedItem
-    if ($selectedDatabase) {
-        $databaseConnectionString = (Get-AzSqlServer -Name $selectedDatabase -ResourceGroupName $selectedResourceGroup).Context.ConnectionString
-        $envVars += @{
-            name  = "DATABASE_CONNECTION_STRING"
-            value = $databaseConnectionString
-        }
-    }
-}
-
-$envYaml = ""
-foreach ($envVar in $envVars) {
-    $envYaml += @"
-        - name: $($envVar.name)
-          value: $($envVar.value)
-"@
-}
 
 $deploymentYaml = @"
 apiVersion: apps/v1
