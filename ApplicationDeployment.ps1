@@ -133,7 +133,7 @@ Write-Host "Namespace: $namespace"
 
 # Deploy the container image to AKS
 $aks = Get-AzAksCluster -Name $aksName -ResourceGroupName $selectedResourceGroup
-az aks get-credentials --name $aksName --resource-group $selectedResourceGroup
+az aks get-credentials --name $aksName --resource-group $selectedResourceGroup 2>&1
 
 # Create the namespace if it doesn't exist
 $namespaceExists = kubectl get namespaces --no-headers -o custom-columns=":metadata.name" | Where-Object { $_ -eq $namespace }
