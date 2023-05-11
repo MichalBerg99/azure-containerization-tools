@@ -161,8 +161,8 @@ git clone $gitRepo $tempFolder 2>&1
 
 # Switch to the specified remote branch if provided
 if ($branchName) {
-    git -C $tempFolder fetch origin $branchName
-    git -C $tempFolder checkout -t "origin/$branchName"
+    git -C $tempFolder fetch origin $branchName 2>&1
+    git -C $tempFolder checkout -t "origin/$branchName" 2>&1
 }
 
 # Login to Azure
@@ -172,11 +172,11 @@ Connect-AzAccount -TenantId $tenantId
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
 az acr login --name $acrName
 $imageName = "$($acr.LoginServer)/app:latest"
-docker build -t $imageName $tempFolder
+docker build -t $imageName $tempFolder 2>&1
 Write-host "Building Docker image"
 Start-Sleep -Seconds 5
 Write-host "Pushing the Docker image"
-docker push $imageName
+docker push $imageName 2>&1
 Write-host "Docker image has been pushed to the container registry"
 
 
