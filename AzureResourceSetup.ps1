@@ -195,7 +195,7 @@ Wait-Resource -ResourceType "Microsoft.ContainerService/managedClusters" -Resour
 Start-sleep -Seconds 2
 
 # Connect kubectl to the AKS cluster
-Import-AzAksCredential -ResourceGroupName $resource_group -Name $aks_cluster_name 2>&1
+Import-AzAksCredential -ResourceGroupName $resource_group -Name $aks_cluster_name
 
 Start-Sleep -Seconds 2
 

@@ -133,7 +133,7 @@ Write-Host "Namespace: $namespace"
 
 # Deploy the container image to AKS
 $aks = Get-AzAksCluster -Name $aksName -ResourceGroupName $selectedResourceGroup
-az aks get-credentials --name $aksName --resource-group $selectedResourceGroup 2>&1
+az aks get-credentials --name $aksName --resource-group $selectedResourceGroup
 
 # Create the namespace if it doesn't exist
 $namespaceExists = kubectl get namespaces --no-headers -o custom-columns=":metadata.name" | Where-Object { $_ -eq $namespace }
@@ -161,8 +161,8 @@ git clone $gitRepo $tempFolder 2>&1
 
 # Switch to the specified remote branch if provided
 if ($branchName) {
-    git -C $tempFolder fetch origin $branchName 2>&1
-    git -C $tempFolder checkout -t "origin/$branchName" 2>&1
+    git -C $tempFolder fetch origin $branchName
+    git -C $tempFolder checkout -t "origin/$branchName"
 }
 
 # Login to Azure
@@ -172,11 +172,11 @@ Connect-AzAccount -TenantId $tenantId
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
 az acr login --name $acrName
 $imageName = "$($acr.LoginServer)/app:latest"
-docker build -t $imageName $tempFolder 2>&1
+docker build -t $imageName $tempFolder
 Write-host "Building Docker image"
 Start-Sleep -Seconds 5
 Write-host "Pushing the Docker image"
-docker push $imageName 2>&1
+docker push $imageName
 Write-host "Docker image has been pushed to the container registry"
 
 
