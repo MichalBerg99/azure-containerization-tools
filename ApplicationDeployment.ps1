@@ -166,7 +166,7 @@ if ($branchName) {
 }
 
 # Login to Azure
-Connect-AzAccount
+Connect-AzAccount -TenantId $tenantId
 
 # Build and push the container image to ACR
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
@@ -201,7 +201,9 @@ $secretExists = kubectl get secrets --namespace=$namespace | Select-String -Patt
 if (-not $secretExists) {
     kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
 } else {
-    Write-Host "Secret $secretName already exists"
+    kubectl delete secret $secretName -n $namespace
+    Start-Sleep -Seconds 2
+    kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
 }
 
 # Stores the Redis container YAML definition if Redis is selected
@@ -259,10 +261,8 @@ spec:
                   name: $secretName
                   key: password
           args:
-            - "--requirepass"
-            - "$(REDIS_PASSWORD)"
-
-
+             - "--requirepass"
+             - "$redisPassword"
 "@
 }
 
