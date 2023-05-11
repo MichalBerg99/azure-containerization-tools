@@ -194,28 +194,11 @@ if ($networkingCapabilities -like "*Storage Account") {
 }
 
 $redisContainerYaml = ""
-$redisPassword = [Convert]::ToBase64String((New-Guid).ToByteArray()).TrimEnd('=')
-$secretName = "redis-password-$($aksName.ToLower())"
-$secretExists = kubectl get secrets --namespace=$namespace | Select-String -Pattern $secretName -Quiet
-
-if (-not $secretExists) {
-    kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
-} else {
-    kubectl delete secret $secretName -n $namespace
-    Start-Sleep -Seconds 2
-    kubectl create secret generic $secretName --from-literal=password=$redisPassword --namespace=$namespace
-}
-
 # Stores the Redis container YAML definition if Redis is selected
 if ($networkingCapabilities -like "*Redis") {
     $envYaml += @"
         - name: REDIS_HOST
           value: "redis"
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: $secretName
-              key: password
 "@
 
     $redisContainerYaml = @"
@@ -254,15 +237,6 @@ spec:
           image: redis:6.2
           ports:
             - containerPort: 6379
-          env:
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: $secretName
-                  key: password
-          args:
-             - "--requirepass"
-             - "$redisPassword"
 "@
 }
 
@@ -303,8 +277,6 @@ kubectl apply -f "$tempFolder\deployment.yaml" --namespace=$namespace
 Write-Host "Applying deployment YAML to Azure Kubernetes Cluster"
 # Clean up
 Remove-Item -Recurse -Force $tempFolder
-
-write-host $redisPassword
 
 # Show success message
 [System.Windows.MessageBox]::Show("Deployment completed!")
