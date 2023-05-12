@@ -168,12 +168,12 @@ The script requires the following user inputs:
 
 1. Resource Group: The Azure resource group where your resources are located.
 2. Git Repository URL: The web address of the Git repository containing the application source code.
-3. Azure Container Registry (ACR) Name: The name of your ACR.
-4. Azure Kubernetes Service (AKS) Name: The name of your AKS cluster.
-5. Networking Capabilities: Optional selections to enhance your application.
+3. Branch Name (Optional): The name of the branch in you Git Repository to use for the deployment
+4. Azure Container Registry (ACR) Name: The name of your ACR.
+5. Azure Kubernetes Service (AKS) Name: The name of your AKS cluster.
+6. Networking Capabilities: Optional selections to enhance your application.
 	- Storage Account (optional): Provides scalable cloud storage.
 	- Redis (optional): Offers an in-memory data structure store.
-	- Database (optional): Enables database management services.
 
 ## Execution Flow
 
