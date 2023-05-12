@@ -48,7 +48,6 @@ Add-Type -AssemblyName System.Drawing
             </StackPanel>
         </ScrollViewer>
         <Button x:Name="OkButton" Content="OK" Grid.Row="2" Width="75" Height="23" Margin="10" HorizontalAlignment="Right" />
-        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Margin="10,0,95,0" Height="23" IsIndeterminate="True" Visibility="Hidden" />
     </Grid>
 </Window>
 "@
@@ -68,11 +67,10 @@ $UseExistingResourceGroup = $form.FindName("UseExistingResourceGroup")
 $ExistingContainerRegistry = $form.FindName("ExistingContainerRegistry")
 $UseExistingContainerRegistry = $form.FindName("UseExistingContainerRegistry")
 $OkButton = $form.FindName("OkButton")
-$ProgressBar = $form.FindName("ProgressBar")
 
 # Fill the comboboxes
 $Location.ItemsSource = @("westus")
-$NodeCount.ItemsSource = @(1..5)
+$NodeCount.ItemsSource = @(1..1000)
 
 $existingResourceGroups = Get-AzResourceGroup
 $ExistingResourceGroup.ItemsSource = $existingResourceGroups.ResourceGroupName
@@ -135,6 +133,7 @@ $OkButton.Add_Click({
 $result = $form.ShowDialog()
 
 if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+    # Continue with the rest of the script
     $useExistingResourceGroup = $UseExistingResourceGroup.IsChecked
     $useExistingContainerRegistry = $UseExistingContainerRegistry.IsChecked
 
@@ -153,6 +152,10 @@ if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
     $location = $Location.Text
     $aks_cluster_name = $AKSClusterName.Text
     $node_count = $NodeCount.Text
+} else {
+    # The form was closed, stop the script
+    write-host "test"
+    return
 }
 
 # Convert the $node_count to an integer
@@ -184,7 +187,7 @@ $acr_login_server = (Get-AzContainerRegistry -ResourceGroupName $resource_group 
 Start-Sleep -Seconds 2
 
 # Create an AKS cluster with a custom node count
-az aks create -n $aks_cluster_name -g $resource_group --generate-ssh-keys --attach-acr $container_registry_name
+az aks create -n $aks_cluster_name -g $resource_group --generate-ssh-keys --attach-acr $container_registry_name --node-vm-size Standard_B2s
 
 Start-Sleep -Seconds 2
 
