@@ -1,4 +1,6 @@
 ﻿# Log in to your Azure account with a specific tenant
+try {
+
 $tenantId = "ace1cb30-a5d7-4184-95b2-800ff3963db0"
 Connect-AzAccount -TenantId $tenantId
 
@@ -71,7 +73,6 @@ $OkButton = $form.FindName("OkButton")
 # Fill the comboboxes
 $locations = (Get-AzLocation).Location
 $Location.ItemsSource = $locations
-#$Location.ItemsSource = @("westus")
 $NodeCount.ItemsSource = @(1..1000)
 
 $existingResourceGroups = Get-AzResourceGroup
@@ -206,3 +207,12 @@ Start-Sleep -Seconds 2
 
 # Display an alert to inform the user that the script has finished running
 [System.Windows.Forms.MessageBox]::Show('The script has finished running.', 'Script Complete', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+
+} catch {
+    # Catch block to handle exceptions
+    $ErrorMessage = $_.Exception.Message
+    Write-Host "Error: $ErrorMessage"
+
+    # Display an error message in a message box
+    [System.Windows.Forms.MessageBox]::Show("An error occurred: $ErrorMessage", 'Error', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
+}
