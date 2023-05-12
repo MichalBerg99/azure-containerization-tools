@@ -149,10 +149,8 @@ if (-not ($selectedResourceGroup -and $gitRepo -and $acrName -and $aksName)) {
 }
 
 # Test if Docker is running
-try {
-    docker info > $null
-}
-catch {
+docker info > $null 2>&1
+if ($LASTEXITCODE -ne 0) {
     [System.Windows.MessageBox]::Show("Docker is not running. Please start Docker.")
     return
 }
