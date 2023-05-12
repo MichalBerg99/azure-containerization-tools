@@ -173,6 +173,7 @@ if (-not $useExistingResourceGroup) {
     New-AzResourceGroup -Name $resource_group -Location $location
 }
 
+# Wait-Resource -ResourceType "Microsoft.Resources/resourceGroups" -ResourceGroupName $resource_group
 start-sleep 2
 # Check if the Container Registry exists, if not, create one
 if (-not $useExistingContainerRegistry) {

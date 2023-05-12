@@ -172,10 +172,6 @@ if ($branchName) {
     git -C $tempFolder checkout -t "origin/$branchName"
 }
 
-# Extracts the filename without extension from the Git repo URL
-$gitRepoName = [System.IO.Path]::GetFileNameWithoutExtension($gitRepo)
-$deploymentName = "app-$gitRepoName"
-
 # Login to Azure
 Connect-AzAccount -TenantId $tenantId
 
@@ -258,7 +254,7 @@ $deploymentYaml = @"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: $deploymentName
+  name: app-deployment
   namespace: $namespace
 spec:
   replicas: 1
