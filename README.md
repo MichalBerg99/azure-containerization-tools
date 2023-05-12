@@ -118,9 +118,8 @@ git clone <url>
 
 - If you encounter any errors while running the script, verify that your Azure account has the required roles mentioned in section 6. If you are unsure about your permissions, consult your Azure administrator.
 - Make sure you have installed the Az module for PowerShell, as mentioned in the prerequisites.
-- If you have multiple Azure accounts or subscriptions, make sure you are logged into the correct account and have the desired subscription set as default. You can use "Get-AzContext" to check the current context and "et-AzContext" to set the desired subscription.
+- If you have multiple Azure accounts or subscriptions, make sure you are logged into the correct account and have the desired subscription set as default. You can use "Get-AzContext" to check the current context and "Set-AzContext" to set the desired subscription.
 - The script may take some time to execute, especially when creating new resources or updating permissions. Please be patient and wait for the message box to appear, indicating the completion of the script.
-
 
 
 ## Importing kubernetes config
