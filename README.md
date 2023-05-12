@@ -11,7 +11,7 @@
   - [Required Azure Roles](#required-azure-roles)
   - [Running the Script](#running-the-script)
   - [Troubleshooting and Tips](#troubleshooting-and-tips)
-    - [Importing Kubernetes Config](#importing-kubernetes-config)
+   - [Importing Kubernetes Config](#importing-kubernetes-config)
 - [AKS Deployment](#aks-deployment)
   - [Prerequisites](#prerequisites-1)
   - [Overview](#overview-1)
