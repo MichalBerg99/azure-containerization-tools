@@ -91,7 +91,7 @@ function Wait-Resource {
     )
 
     $retryIntervalInSeconds = 10
-    $maxRetries = 12
+    $maxRetries = 5
 
     for ($i = 0; $i -lt $maxRetries; $i++) {
         $resource = Get-AzResource -ResourceType $ResourceType -ResourceGroupName $ResourceGroupName -Name $ResourceName -ErrorAction SilentlyContinue
@@ -173,8 +173,8 @@ if (-not $useExistingResourceGroup) {
     New-AzResourceGroup -Name $resource_group -Location $location
 }
 
-Wait-Resource -ResourceType "Microsoft.Resources/resourceGroups" -ResourceGroupName $resource_group
-
+# Wait-Resource -ResourceType "Microsoft.Resources/resourceGroups" -ResourceGroupName $resource_group
+start-sleep 2
 # Check if the Container Registry exists, if not, create one
 if (-not $useExistingContainerRegistry) {
     New-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name -Sku Basic -EnableAdminUser
@@ -183,8 +183,6 @@ Wait-Resource -ResourceType "Microsoft.ContainerRegistry/registries" -ResourceGr
 
 # Login to the Container Registry
 $credentials = Get-AzContainerRegistryCredential -ResourceGroupName $resource_group -Name $container_registry_name
-
-Wait-Resource -ResourceType "Microsoft.ContainerService/managedClusters" -ResourceGroupName $resource_group -ResourceName $aks_cluster_name
 
 # Get the login server address of the container registry
 $acr_login_server = (Get-AzContainerRegistry -ResourceGroupName $resource_group -Name $container_registry_name).LoginServer
