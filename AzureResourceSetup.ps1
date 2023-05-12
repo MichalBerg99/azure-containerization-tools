@@ -98,13 +98,17 @@ function Wait-Resource {
 
         if ($resource) {
             Write-Host "Resource $($ResourceType) $($ResourceName) is available."
-            break
+            return
         } else {
             Write-Host "Waiting for resource $($ResourceType) $($ResourceName) to become available..."
             Start-Sleep -Seconds $retryIntervalInSeconds
         }
     }
+
+    # Throw an exception if the resource did not become available
+    throw "Resource $($ResourceType) $($ResourceName) did not become available within the specified retries."
 }
+
 
 
 # Function to enable/disable TextBox controls based on the CheckBox state
