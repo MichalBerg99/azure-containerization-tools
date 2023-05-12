@@ -69,7 +69,9 @@ $UseExistingContainerRegistry = $form.FindName("UseExistingContainerRegistry")
 $OkButton = $form.FindName("OkButton")
 
 # Fill the comboboxes
-$Location.ItemsSource = @("westus")
+$locations = (Get-AzLocation).Location
+$Location.ItemsSource = $locations
+#$Location.ItemsSource = @("westus")
 $NodeCount.ItemsSource = @(1..1000)
 
 $existingResourceGroups = Get-AzResourceGroup
