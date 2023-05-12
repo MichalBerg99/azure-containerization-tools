@@ -148,6 +148,15 @@ if (-not ($selectedResourceGroup -and $gitRepo -and $acrName -and $aksName)) {
     return
 }
 
+# Test if Docker is running
+try {
+    docker info > $null
+}
+catch {
+    [System.Windows.MessageBox]::Show("Docker is not running. Please start Docker.")
+    return
+}
+
 # Test the Git repository URL
     $gitRepoTest = git ls-remote -q $gitRepo 2>&1
     if ($gitRepoTest -like "*fatal:*") {
