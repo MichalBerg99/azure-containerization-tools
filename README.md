@@ -131,7 +131,7 @@ When the script prompts you to import the Kubernetes config, it means that the s
 If you choose to import the configuration, the script will update your local kubeconfig file with the cluster information. After the import, you can use kubectl commands to manage your AKS cluster from your local machine. If you choose not to import the configuration, you'll need to manually configure kubectl to connect to your AKS cluster later.
 
 
-# Aks-Deployment
+# Application Deployment
 
 
 ## Introduction
