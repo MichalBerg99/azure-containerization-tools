@@ -1,8 +1,7 @@
-﻿# Log in to your Azure account with a specific tenant
+﻿# Log in to your Azure account
 try {
 
-$tenantId = "ace1cb30-a5d7-4184-95b2-800ff3963db0"
-Connect-AzAccount -TenantId $tenantId
+Connect-AzAccount
 
 # Load the required assemblies for WPF
 Add-Type -AssemblyName PresentationFramework

@@ -78,8 +78,7 @@ $deployButton = $window.FindName('DeployButton')
 
 # Get existing resource groups, ACRs, and AKS clusters
 
-$tenantId = "ace1cb30-a5d7-4184-95b2-800ff3963db0"
-Connect-AzAccount -TenantId $tenantId
+Connect-AzAccount
 # Connect-AzAccount
 $allResourceGroups = Get-AzResourceGroup | Select-Object -ExpandProperty ResourceGroupName
 $resourceGroupComboBox.ItemsSource = $allResourceGroups
@@ -173,7 +172,7 @@ if ($branchName) {
 }
 
 # Login to Azure
-Connect-AzAccount -TenantId $tenantId
+Connect-AzAccount
 
 # Build and push the container image to ACR
 $acr = Get-AzContainerRegistry -Name $acrName -ResourceGroupName $selectedResourceGroup
