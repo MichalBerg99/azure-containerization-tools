@@ -12,7 +12,7 @@
   - [Running the Script](#running-the-script)
   - [Troubleshooting and Tips](#troubleshooting-and-tips)
    - [Importing Kubernetes Config](#importing-kubernetes-config)
-- [AKS Deployment](#aks-deployment)
+- [Application Deployment](#application-deployment)
   - [Prerequisites](#prerequisites-1)
   - [Overview](#overview-1)
   - [Input Parameters](#input-parameters-1)
@@ -25,7 +25,7 @@
 
 This documentation provides step-by-step instructions for deploying container-based applications to Azure Kubernetes Service (AKS) using the AzureResourceSetup PowerShell script. The script simplifies the process of setting up an AKS cluster and associated Azure Container Registry (ACR).
 
-Prerequisites
+## Prerequisites
 
 - You have an active Azure account.
 - You have a Windows machine with PowerShell 5.1 or higher installed.
@@ -171,7 +171,8 @@ The script requires the following user inputs:
 3. Branch Name (Optional): The name of the branch in you Git Repository to use for the deployment
 4. Azure Container Registry (ACR) Name: The name of your ACR.
 5. Azure Kubernetes Service (AKS) Name: The name of your AKS cluster.
-6. Networking Capabilities: Optional selections to enhance your application.
+6. Namespace (Optional): The Kubernetes namespace to which the application should be deployed. If not provided, the "default" namespace will be used.
+7. Networking Capabilities: Optional selections to enhance your application.
 	- Storage Account (optional): Provides scalable cloud storage.
 	- Redis (optional): Offers an in-memory data structure store.
 
