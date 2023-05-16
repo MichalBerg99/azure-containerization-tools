@@ -49,7 +49,6 @@ Add-Type -AssemblyName PresentationCore
         <ListBox Grid.Row="6" Grid.Column="1" Name="NetworkingCapabilitiesListBox" Margin="5" SelectionMode="Multiple">
             <ListBoxItem>Storage Account</ListBoxItem>
             <ListBoxItem>Redis</ListBoxItem>
-            <ListBoxItem>Database</ListBoxItem>
         </ListBox>
         <StackPanel Grid.Row="7" Grid.Column="1" Name="StorageAccountPanel" Margin="5" >
             <Label Content="Storage Account:" />
@@ -91,13 +90,13 @@ $resourceGroupComboBox.Add_SelectionChanged({
         # Get ACRs and AKS clusters in the selected resource group
         $allAcrs = Get-AzContainerRegistry -ResourceGroupName $selectedResourceGroup
         $allAks = Get-AzAksCluster -ResourceGroupName $selectedResourceGroup
-         # Get storage accounts and databases in the selected resource group
+         # Get storage accounts in the selected resource group
         $allStorageAccounts = Get-AzStorageAccount -ResourceGroupName $selectedResourceGroup
 
         # Populate the ACR, AKS, Storage account ComboBoxes
         $acrNameComboBox.Items.Clear()
         $aksNameComboBox.Items.Clear()
-        # Populate the  and database ComboBoxes
+        # Populate the storage account ComboBox
         $storageAccountComboBox.Items.Clear()
 
         foreach ($acr in $allAcrs) {
